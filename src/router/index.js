@@ -26,8 +26,9 @@ import Layout from '@/layout'
  */
 
 /**
- * 常量路由表
- * 用户未登录就可以访问的路由表
+ * constantRoutes
+ * a base page that does not have permission requirements
+ * all roles can be accessed
  */
 export const constantRoutes = [
   {
@@ -55,85 +56,9 @@ export const constantRoutes = [
       }
     ]
   },
-
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
-
-/**
- * 异步路由表
- * 用户登录了，并且拥有权限才能访问的路由表
- */
-/* export const asyncRoutes = [
-  {
-    path: '/product',
-    component: Layout,
-    redirect: '/product/trademark/list',
-    name: 'Product',
-    meta: { title: '商品管理', icon: 'table' },
-    children: [
-      {
-        path: 'trademark/list',
-        name: 'Trademark',
-        component: () => import('@/views/product/trademark'),
-        meta: { title: '品牌管理' }
-      },
-      {
-        path: 'attr/list',
-        name: 'Attr',
-        component: () => import('@/views/product/attr'),
-        meta: { title: '属性管理' }
-      },
-      {
-        path: 'spu/list',
-        name: 'Spu',
-        component: () => import('@/views/product/spu'),
-        meta: { title: 'Spu管理' }
-      },
-      {
-        path: 'sku/list',
-        name: 'Sku',
-        component: () => import('@/views/product/sku'),
-        meta: { title: 'Sku管理' }
-      }
-    ]
-  },
-
-  {
-    path: '/acl',
-    component: Layout,
-    redirect: '/acl/user/list',
-    name: 'Acl',
-    meta: { title: '权限管理', icon: 'password' },
-    children: [
-      {
-        path: 'user/list',
-        name: 'User',
-        component: () => import('@/views/acl/user'),
-        meta: { title: '用户管理' }
-      },
-      {
-        path: 'role/list',
-        name: 'Role',
-        component: () => import('@/views/acl/role'),
-        meta: { title: '角色管理' }
-      },
-      {
-        path: 'role/auth/:roleId',
-        name: 'RoleAuth',
-        component: () => import('@/views/acl/role/roleAuth'),
-        meta: { title: '角色授权' },
-        hidden: true
-      },
-      {
-        path: 'permission/list',
-        name: 'Permission',
-        component: () => import('@/views/acl/permission'),
-        meta: { title: '菜单管理' }
-      }
-    ]
-  }
-] */
 
 const createRouter = () =>
   new Router({
