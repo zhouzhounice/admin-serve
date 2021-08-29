@@ -52,7 +52,39 @@ export const constantRoutes = [
         path: 'dashboard',
         name: 'Dashboard',
         component: () => import('@/views/dashboard/index'),
-        meta: { title: 'Dashboard', icon: 'dashboard' }
+        meta: { title: '首页', icon: 'dashboard' }
+      }
+    ]
+  },
+  {
+    path: '/product',
+    component: Layout,
+    redirect: 'trademark/list',
+    meta: { title: '商品管理', icon: 'el-icon-s-shop' },
+    children: [
+      {
+        path: 'trademark/list',
+        name: 'TradeMark',
+        component: () => import('@/views/product/trademark/list'),
+        meta: { title: '品牌管理' }
+      },
+      {
+        path: 'attr/attr',
+        name: 'Attr',
+        component: () => import('@/views/product/attr/attr'),
+        meta: { title: '属性管理' }
+      },
+      {
+        path: 'sku/sku',
+        name: 'SKU',
+        component: () => import('@/views/product/sku/sku'),
+        meta: { title: 'Sku管理' }
+      },
+      {
+        path: 'spu/spu',
+        name: 'SPU',
+        component: () => import('@/views/product/spu/spu'),
+        meta: { title: 'Spu管理' }
       }
     ]
   },
