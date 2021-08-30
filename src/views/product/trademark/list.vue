@@ -1,7 +1,9 @@
 <template>
   <div>
     <!-- 添加按钮 -->
-    <el-button type="primary" icon="el-icon-plus">添加</el-button>
+    <el-button type="primary" icon="el-icon-plus" @click="showDialog"
+      >添加</el-button
+    >
     <!-- 商品显示列表 -->
     <el-table border style="width: 100%;margin:20px 0" :data="trademarkList">
       <el-table-column label="序号" width="80" align="center" type="index" />
@@ -17,12 +19,20 @@
         </template>
       </el-table-column>
       <el-table-column label="操作">
-        <template>
+        <template slot-scope="{ row }">
           <div>
-            <el-button type="warning" size="mini" icon="el-icon-edit"
+            <el-button
+              type="warning"
+              size="mini"
+              icon="el-icon-edit"
+              @click="showDialog(row)"
               >编辑</el-button
             >
-            <el-button size="mini" type="danger" icon="el-icon-delete"
+            <el-button
+              size="mini"
+              type="danger"
+              icon="el-icon-delete"
+              @click="deleteTardeMark(row)"
               >删除</el-button
             >
           </div>
@@ -35,7 +45,7 @@
       :total="total"
       :current-page="page"
       :page-size="limit"
-      :page-sizes="[1, 2, 3]"
+      :page-sizes="[2, 4, 6]"
       layout="prev,pager,next,jumper,->,sizes,total"
       @current-change="handleCurrentChange"
       @size-change="handleSizeChange"
@@ -46,36 +56,33 @@
       :label-width="formLabelWidth"  用来控制
       :model="form"  用来收集表单数据的对象
      -->
-    <el-dialog title="添加品牌" :visible.sync="dialogFormVisible">
+    <el-dialog
+      :title="tmForm.id ? '修改品牌' : '添加品牌'"
+      :visible.sync="dialogFormVisible"
+    >
       <el-form :model="tmForm">
-        <el-form-item
-          label="品牌名称"
-          :label-width="formLabelWidth"
-          :label-height="formLabelHeight"
-        >
+        <el-form-item label="品牌名称" :label-width="formLabelWidth">
           <el-input v-model="tmForm.tmName" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="品牌logo" :label-width="formLabelWidth">
+        <el-form-item label="品牌LOGO" :label-width="formLabelWidth">
           <el-upload
             class="avatar-uploader"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action="/dev-api/admin/product/fileUpload"
             :show-file-list="false"
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
           >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+            <img v-if="tmForm.logoUrl" :src="tmForm.logoUrl" class="avatar" />
             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             <div class="el-upload__tip" slot="tip">
-              只能上传jpg/png文件，且不超过500kb
+              只能上传jpg/png文件，且不超过200kb
             </div>
           </el-upload>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false"
-          >确 定</el-button
-        >
+        <el-button type="primary" @click="save">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -86,16 +93,16 @@ export default {
   data() {
     return {
       page: 1,
-      limit: 1,
+      limit: 2,
       total: 3,
       trademarkList: [],
-      dialogFormVisible: true,
+      dialogFormVisible: false,
       tmForm: {
         tmName: '',
         logoUrl: ''
       },
       formLabelWidth: '100px',
-      formLabelHeight: '300px'
+      imageUrl: ''
     }
   },
   mounted() {
@@ -122,23 +129,91 @@ export default {
     handleSizeChange(value) {
       this.limit = value
       this.getTradeMark()
-    }
-    // 限制图片格式与大小
-    /*  handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw)
     },
+    // 图片上传成功需要做的事
+    handleAvatarSuccess(res, file) {
+      // 收集到了图片地址
+      this.tmForm.logoUrl = res.data
+    },
+    // 判断上传图片的格式和大小
     beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg'
-      const isLt2M = file.size / 1024 / 1024 < 6
+      // 判断图片格式
+      const types = ['image/jpeg', 'image/jpg', 'image/png']
+      const isJPG = types.includes(file.type)
+      // 判断图片大小
+      const isLt2M = file.size / 1024 / 1024 < 20
 
       if (!isJPG) {
         this.$message.error('上传头像图片只能是 JPG 格式!')
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 6MB!')
+        this.$message.error('上传头像图片大小不能超过 2MB!')
       }
-      return isJPG && isLt6M
-    } */
+      return isJPG && isLt2M
+    },
+    // 当点击模态框确定按钮时的事件
+    async save() {
+      try {
+        // 1.将收集到tmForm中的数据发送请求添加到服务器中
+        await this.$API.trademark.addTardeMark(this.tmForm)
+        // 2.如果成功了，则重新查寻一次商品数据
+        this.getTradeMark()
+        // 并且出现一个添加成功的弹窗
+        this.$message({
+          showClose: true,
+          message: '商品添加成功！',
+          type: 'success'
+        })
+        // 并且关闭模态框
+        this.dialogFormVisible = false
+        // 清空遗留在组件中的数据
+        this.tmForm = {
+          tmName: '',
+          logoUrl: ''
+        }
+      } catch (error) {
+        // 失败则弹出失败弹窗
+        this.$message({
+          showClose: true,
+          message: '商品添加失败！',
+          type: 'error'
+        })
+      }
+    },
+    // 让模态框显示的事件
+    showDialog(row) {
+      // 判断 如果row中有id说明是要修改商品
+      if (row.id) {
+        this.tmForm = row
+      }
+      //点击添加按钮使得模态框展示
+      this.dialogFormVisible = true
+    },
+    // 删除商品的事件
+    deleteTardeMark(row) {
+      const { id } = row
+      this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          await this.$API.trademark.deleteTradeMark(id)
+          // 重新渲染商品列表
+          this.getTradeMark()
+          // 如果成功则显示商品删除成功
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          })
+        })
+    }
   }
 }
 </script>
