@@ -60,11 +60,19 @@
       :title="tmForm.id ? '修改品牌' : '添加品牌'"
       :visible.sync="dialogFormVisible"
     >
-      <el-form :model="tmForm">
-        <el-form-item label="品牌名称" :label-width="formLabelWidth">
+      <el-form :model="tmForm" :rules="rules" ref="ruleForm">
+        <el-form-item
+          label="品牌名称"
+          :label-width="formLabelWidth"
+          prop="tmName"
+        >
           <el-input v-model="tmForm.tmName" autocomplete="off" />
         </el-form-item>
-        <el-form-item label="品牌LOGO" :label-width="formLabelWidth">
+        <el-form-item
+          label="品牌LOGO"
+          :label-width="formLabelWidth"
+          prop="logoUrl"
+        >
           <el-upload
             class="avatar-uploader"
             action="/dev-api/admin/product/fileUpload"
@@ -102,7 +110,14 @@ export default {
         logoUrl: ''
       },
       formLabelWidth: '100px',
-      imageUrl: ''
+      imageUrl: '',
+      rules: {
+        tmName: [
+          { required: true, message: '请输入品牌名称', trigger: 'blur' },
+          { min: 2, max: 8, message: '长度在 2 到 8 个字符', trigger: 'blur' }
+        ],
+        logoUrl: [{ required: true, message: '请上传logo', trigger: 'blur' }]
+      }
     }
   },
   mounted() {
@@ -152,33 +167,30 @@ export default {
       return isJPG && isLt2M
     },
     // 当点击模态框确定按钮时的事件
-    async save() {
-      try {
-        // 1.将收集到tmForm中的数据发送请求添加到服务器中
-        await this.$API.trademark.addTardeMark(this.tmForm)
-        // 2.如果成功了，则重新查寻一次商品数据
-        this.getTradeMark()
-        // 并且出现一个添加成功的弹窗
-        this.$message({
-          showClose: true,
-          message: '商品添加成功！',
-          type: 'success'
-        })
-        // 并且关闭模态框
-        this.dialogFormVisible = false
-        // 清空遗留在组件中的数据
-        this.tmForm = {
-          tmName: '',
-          logoUrl: ''
+    save() {
+      this.$refs.ruleForm.validate(async valid => {
+        if (valid) {
+          // 1.将收集到tmForm中的数据发送请求添加到服务器中
+          await this.$API.trademark.addTardeMark(this.tmForm)
+          // 2.如果成功了，则重新查寻一次商品数据
+          this.getTradeMark()
+          // 并且出现一个添加成功的弹窗
+          this.$message({
+            showClose: true,
+            message: '商品添加成功！',
+            type: 'success'
+          })
+          // 并且关闭模态框
+          this.dialogFormVisible = false
+          // 清空遗留在组件中的数据
+          this.tmForm = {
+            tmName: '',
+            logoUrl: ''
+          }
+        } else {
+          this.$message.error('保存失败！')
         }
-      } catch (error) {
-        // 失败则弹出失败弹窗
-        this.$message({
-          showClose: true,
-          message: '商品添加失败！',
-          type: 'error'
-        })
-      }
+      })
     },
     // 让模态框显示的事件
     showDialog(row) {
