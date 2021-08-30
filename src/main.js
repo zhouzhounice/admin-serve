@@ -14,6 +14,8 @@ import router from './router'
 
 import '@/icons' // icon
 import '@/permission' // permission control
+// 引入所有的api并且把他们放在vue的原型对象上
+import * as API from './api'
 
 /**
  * If you don't want to use mock-server
@@ -27,7 +29,7 @@ if (process.env.NODE_ENV === 'production') {
   const { mockXHR } = require('../mock')
   mockXHR()
 }
-
+Vue.prototype.$API = API
 // set ElementUI lang to EN
 Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明

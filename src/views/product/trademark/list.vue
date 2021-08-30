@@ -3,7 +3,7 @@
     <el-button type="primary" icon="el-icon-plus">添加</el-button>
     <el-table border style="width: 100%;margin:20px 0">
       <el-table-column label="序号" width="80" align="center" />
-      <el-table-column label="品牌名称" width="180" align="center" />
+      <el-table-column label="品牌名称" align="center" />
       <el-table-column label="品牌LOGO" align="center" />
       <el-table-column label="操作" align="center" />
     </el-table>
