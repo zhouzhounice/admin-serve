@@ -28,17 +28,7 @@
 <script>
 export default {
   name: 'ShowList',
-  data() {
-    return {
-      total: 3,
-      page: 1,
-      limit: 1
-    }
-  },
-  methods: {
-    handleCurrentChange() {},
-    handleSizeChange() {}
-  }
+  
 }
 </script>
 <style lang=""></style>

@@ -18,10 +18,8 @@ import '@/permission' // permission control
 import * as API from './api'
 
 import CategorySelector from '@/components/categorySelector/categorySelector.vue'
-import ShowAttrList from '@/components/showAttrList/showAttrList.vue'
 import ShowSpuList from '@/components/showSpuList/showSpuList.vue'
 Vue.component('CategorySelector', CategorySelector)
-Vue.component('ShowAttrList', ShowAttrList)
 Vue.component('ShowSpuList', ShowSpuList)
 /**
  * If you don't want to use mock-server

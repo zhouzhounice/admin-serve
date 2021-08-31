@@ -30,7 +30,11 @@
         </el-select>
       </el-form-item>
       <el-form-item label="三级分类" value="first">
-        <el-select placeholder="请选择" v-model="cForm.category3">
+        <el-select
+          placeholder="请选择"
+          v-model="cForm.category3"
+          @change="c3Change"
+        >
           <el-option
             :label="item.name"
             :value="item.id"
@@ -86,6 +90,13 @@ export default {
       this.getcategory3()
       this.cForm.category3 = ''
       this.category3List = []
+    },
+    c3Change() {
+      this.$emit('categoryChange', {
+        category1: this.cForm.category1,
+        category2: this.cForm.category2,
+        category3: this.cForm.category3
+      })
     }
   },
   mounted() {
