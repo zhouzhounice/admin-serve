@@ -17,6 +17,10 @@ import '@/permission' // permission control
 // 引入所有的api并且把他们放在vue的原型对象上
 import * as API from './api'
 
+import CategorySelector from '@/components/categorySelector/categorySelector.vue'
+import ShowList from '@/components/showList/showList.vue'
+Vue.component('CategorySelector', CategorySelector)
+Vue.component('ShowList', ShowList)
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

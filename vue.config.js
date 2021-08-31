@@ -30,6 +30,9 @@ module.exports = {
   lintOnSave: process.env.NODE_ENV === 'development',
   productionSourceMap: false,
   devServer: {
+    headers: { 'Access-Control-Allow-Origin': '*' },
+    https: false,
+    disableHostCheck: true,
     host: '127.0.0.1',
     port: port,
     open: true,
