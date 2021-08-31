@@ -4,7 +4,9 @@
       <CategorySelector></CategorySelector>
     </el-card>
     <el-card class="box-card" style="margin:10px 20px">
-      body
+      <!-- 添加按钮 -->
+      <el-button type="primary" icon="el-icon-plus">添加属性</el-button>
+      <ShowAttrList></ShowAttrList>
     </el-card>
   </div>
 </template>
