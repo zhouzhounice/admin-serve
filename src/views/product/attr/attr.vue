@@ -28,21 +28,17 @@
         <el-table-column label="操作" width="300">
           <template>
             <div>
-              <el-tooltip content="修改属性" placement="top">
-                <el-button
-                  type="warning"
-                  size="mini"
-                  icon="el-icon-edit"
-                ></el-button>
-              </el-tooltip>
-              <el-tooltip content="删除属性" placement="top">
-                <el-button
-                  size="mini"
-                  type="danger"
-                  icon="el-icon-delete"
-                  style="margin-left:0px"
-                ></el-button>
-              </el-tooltip>
+              <HintButton
+                title="修改属性"
+                type="warning"
+                icon="el-icon-edit"
+                @click="test"
+              />
+              <HintButton
+                title="删除属性"
+                type="danger"
+                icon="el-icon-delete"
+              />
             </div>
           </template>
         </el-table-column>
@@ -73,6 +69,9 @@ export default {
         category3
       )
       this.attrList = data
+    },
+    test() {
+      console.log(111)
     }
   }
 }
