@@ -15,27 +15,34 @@
           align="center"
           prop="attrName"
         />
-        <el-table-column label="属性描述" align="center">
-          <template slot-scope="scope">
-            <el-popover trigger="hover" placement="top">
-              <p>姓名: {{ scope.row.valueName }}</p>
-            </el-popover>
+        <el-table-column label="属性描述">
+          <template slot-scope="{ row }">
+            <el-tag
+              v-for="attrValue in row.attrValueList"
+              :key="attrValue.id"
+              style="margin:0 3px"
+              >{{ attrValue.valueName }}</el-tag
+            >
           </template>
         </el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" width="300">
           <template>
             <div>
-              <el-button
-                type="warning"
-                size="mini"
-                icon="el-icon-edit"
-              ></el-button>
-              <el-button
-                size="mini"
-                type="danger"
-                icon="el-icon-delete"
-                style="margin-left:0px"
-              ></el-button>
+              <el-tooltip content="修改属性" placement="top">
+                <el-button
+                  type="warning"
+                  size="mini"
+                  icon="el-icon-edit"
+                ></el-button>
+              </el-tooltip>
+              <el-tooltip content="删除属性" placement="top">
+                <el-button
+                  size="mini"
+                  type="danger"
+                  icon="el-icon-delete"
+                  style="margin-left:0px"
+                ></el-button>
+              </el-tooltip>
             </div>
           </template>
         </el-table-column>
