@@ -96,6 +96,7 @@
   </div>
 </template>
 <script>
+import cloneDeep from 'lodash/cloneDeep'
 export default {
   name: 'Attr',
   data() {
@@ -121,6 +122,7 @@ export default {
     }
   },
   methods: {
+    // 用于获取属性列表
     async categoryChange({ category1, category2, category3 }) {
       console.log(category1, category2, category3)
       this.category1Id = category1
@@ -133,12 +135,14 @@ export default {
       )
       this.attrList = data
     },
+    // 用于展示添加属性以及修改属性页面
     showAddAttr(row) {
       if (row.id) {
-        this.attrForm = row
+        this.attrForm = cloneDeep(row)
       }
       this.isShow = false
     },
+    // 点击添加属性按钮后的事件
     addAttrValue() {
       this.attrForm.attrValueList.push({
         attrId: this.attrForm.id,
