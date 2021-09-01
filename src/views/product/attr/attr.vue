@@ -46,6 +46,7 @@
                   title="删除属性"
                   type="danger"
                   icon="el-icon-delete"
+                  @click="deleteAttrCategory(row.id)"
                 />
               </div>
             </template>
@@ -80,13 +81,23 @@
           <el-table-column prop="name" label="属性值名称" align="center">
             <template slot-scope="{ row }">
               <el-input
+                size="mini"
+                v-if="row.isEdit"
                 v-model="row.valueName"
                 placeholder="请输入属性值"
+                @blur="toLook(row)"
               ></el-input>
+              <div v-else style="text-align:left" @click="toEdit(row)">
+                {{ row.valueName }}
+              </div>
             </template>
           </el-table-column>
           <el-table-column prop="address" label="操作">
-            <HintButton title="删除属性" type="danger" icon="el-icon-delete" />
+            <HintButton
+              title="删除属性值"
+              type="danger"
+              icon="el-icon-delete"
+            />
           </el-table-column>
         </el-table>
         <el-button type="primary">确定</el-button>
@@ -124,7 +135,6 @@ export default {
   methods: {
     // 用于获取属性列表
     async categoryChange({ category1, category2, category3 }) {
-      console.log(category1, category2, category3)
       this.category1Id = category1
       this.category2Id = category2
       this.category3Id = category3
@@ -134,23 +144,62 @@ export default {
         category3
       )
       this.attrList = data
+      this.isShow = true
     },
     // 用于展示添加属性以及修改属性页面
     showAddAttr(row) {
       if (row.id) {
         this.attrForm = cloneDeep(row)
+        this.attrForm.attrValueList.forEach(item => {
+          this.$set(item, 'isEdit', false)
+        })
       }
       this.isShow = false
     },
     // 点击添加属性按钮后的事件
     addAttrValue() {
-      this.attrForm.attrValueList.push({
+      this.attrForm.attrValueList.unshift({
         attrId: this.attrForm.id,
         // id: 0,
-        valueName: ''
+        valueName: '',
+        isEdit: true
       })
+    },
+    // 点击删除按钮后的事件
+    async deleteAttrCategory(attrId) {
+      await this.$API.attrCategory.deleteAttrCategory(attrId)
+      this.$message({
+        message: '属性删除成功！',
+        type: 'success'
+      })
+
+      this.categoryChange()
+    },
+    // 输入框失去焦点后变为div展示状态
+    toLook(row) {
+      // 当用户输入属性名与前面属性名重复时
+      const valueName = row.valueName
+      const repetition = this.attrForm.attrValueList.some(item => {
+        if (item !== row) {
+          return item.valueName === valueName
+        }
+      })
+      console.log(repetition)
+      if (repetition) {
+        this.$message.info('属性值不能重复')
+        return
+      }
+      // 当输入属性名不为空时，失去焦点后切换为展示状态
+      if (valueName) {
+        row.isEdit = false
+        return
+      }
+      this.$message.info('属性值不能为空')
+    },
+    toEdit(row) {
+      row.isEdit = true
     }
   }
 }
 </script>
-<style lang=""></style>
+<style></style>

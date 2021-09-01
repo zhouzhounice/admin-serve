@@ -17,5 +17,10 @@ export default {
     return request.get(
       `/admin/product/attrInfoList/${category1Id}/${category2Id}/${category3Id}`
     )
+  },
+  // 添加商品属性
+  // 删除某个商品属性
+  deleteAttrCategory(attrId) {
+    return request.delete(`/admin/product/deleteAttr/${attrId}`)
   }
 }
