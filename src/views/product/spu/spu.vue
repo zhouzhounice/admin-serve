@@ -69,14 +69,18 @@
           @size-change="handleSizeChange"
         />
       </div>
-      <div v-show="isShowSpu">添加SPU</div>
-      <div v-show="isShowSku">添加SKU</div>
+      <SpuForm v-show="isShowSpu">添加SPU</SpuForm>
+      <SkuForm v-show="isShowSku">添加SKU</SkuForm>
     </el-card>
   </div>
 </template>
 <script>
+import SkuForm from './components/addSkuForm/addSkuForm.vue'
+import SpuForm from './components/addSpuForm/addSpuForm.vue'
+
 export default {
   name: 'SPU',
+  components: { SkuForm, SpuForm },
   data() {
     return {
       total: 3,
