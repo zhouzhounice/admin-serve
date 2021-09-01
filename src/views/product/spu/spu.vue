@@ -91,7 +91,7 @@ export default {
       category3Id: '',
       spuList: [],
       isShowSpu: false,
-      isShowSku: false
+      isShowSku: true
     }
   },
   methods: {
