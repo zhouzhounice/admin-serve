@@ -1,7 +1,10 @@
 <template>
   <div>
     <el-card class="box-card" style="margin:0 20px">
-      <CategorySelector @categoryChange="categoryChange"></CategorySelector>
+      <CategorySelector
+        @categoryChange="categoryChange"
+        :isShow="isShow"
+      ></CategorySelector>
     </el-card>
     <el-card class="box-card" style="margin:10px 20px">
       <div v-show="isShow">
@@ -46,7 +49,7 @@
                   title="删除属性"
                   type="danger"
                   icon="el-icon-delete"
-                  @click="deleteAttrCategory(row.id)"
+                  @click="deleteAttr(row.id)"
                 />
               </div>
             </template>
@@ -81,6 +84,7 @@
           <el-table-column prop="name" label="属性值名称" align="center">
             <template slot-scope="{ row }">
               <el-input
+                ref="getFocus"
                 size="mini"
                 v-if="row.isEdit"
                 v-model="row.valueName"
@@ -93,14 +97,22 @@
             </template>
           </el-table-column>
           <el-table-column prop="address" label="操作">
-            <HintButton
-              title="删除属性值"
-              type="danger"
-              icon="el-icon-delete"
-            />
+            <template slot-scope="{ row, $index }">
+              <el-popconfirm
+                :title="`确定删除${row.valueName}吗？`"
+                @onConfirm="deleteAttrCategory($index)"
+              >
+                <HintButton
+                  slot="reference"
+                  title="删除属性值"
+                  type="danger"
+                  icon="el-icon-delete"
+                />
+              </el-popconfirm>
+            </template>
           </el-table-column>
         </el-table>
-        <el-button type="primary">确定</el-button>
+        <el-button type="primary" @click="save">确定</el-button>
         <el-button plain @click="isShow = true">取消</el-button>
       </div>
     </el-card>
@@ -108,6 +120,14 @@
 </template>
 <script>
 import cloneDeep from 'lodash/cloneDeep'
+const reseForm = function() {
+  return {
+    attrName: '',
+    attrValueList: [],
+    categoryId: 0,
+    categoryLevel: 3
+  }
+}
 export default {
   name: 'Attr',
   data() {
@@ -132,16 +152,22 @@ export default {
       }
     }
   },
+  mounted() {},
   methods: {
-    // 用于获取属性列表
-    async categoryChange({ category1, category2, category3 }) {
+    // 将拿到的属性id存入父组件中
+    categoryChange({ category1, category2, category3 }) {
       this.category1Id = category1
       this.category2Id = category2
       this.category3Id = category3
+      this.getAttrCategory()
+    },
+    // 用于获取列表属性
+    async getAttrCategory() {
+      const { category1Id, category2Id, category3Id } = this
       const { data } = await this.$API.attrCategory.getAttrCategoryList(
-        category1,
-        category2,
-        category3
+        category1Id,
+        category2Id,
+        category3Id
       )
       this.attrList = data
       this.isShow = true
@@ -165,15 +191,23 @@ export default {
         isEdit: true
       })
     },
-    // 点击删除按钮后的事件
-    async deleteAttrCategory(attrId) {
-      await this.$API.attrCategory.deleteAttrCategory(attrId)
-      this.$message({
-        message: '属性删除成功！',
-        type: 'success'
-      })
-
-      this.categoryChange()
+    // 点击删除属性值按钮后的事件
+    deleteAttrCategory($index) {
+      this.attrForm.attrValueList.splice($index, 1)
+    },
+    // 点击删除属性按钮后
+    async deleteAttr(attrId) {
+      try {
+        await this.$API.attrCategory.deleteAttrCategory(attrId)
+        this.$message({
+          message: '删除成功！',
+          type: 'success'
+        })
+        this.getAttrCategory()
+      } catch (error) {
+        console.log(error)
+        this.$message.error('删除失败！')
+      }
     },
     // 输入框失去焦点后变为div展示状态
     toLook(row) {
@@ -184,9 +218,8 @@ export default {
           return item.valueName === valueName
         }
       })
-      console.log(repetition)
       if (repetition) {
-        this.$message.info('属性值不能重复')
+        this.$message.error('属性值不能重复')
         return
       }
       // 当输入属性名不为空时，失去焦点后切换为展示状态
@@ -194,10 +227,47 @@ export default {
         row.isEdit = false
         return
       }
-      this.$message.info('属性值不能为空')
+      this.$message.error('属性值不能为空')
     },
     toEdit(row) {
       row.isEdit = true
+      // 进入编辑模式后立马获取焦点
+      this.$nextTick(() => {
+        this.$refs.getFocus.focus()
+      })
+    },
+    async save() {
+      // 发送请求前要做的事
+      // 1.收集数据  5.失败后
+      // 收集数据 数据就是attrForm
+      const { attrForm, category3Id } = this
+      attrForm.categoryId = category3Id
+      // 2.判断是否添加了属性值
+      if (attrForm.attrValueList.length === 0) {
+        this.$message.error('属性值个数不能为0')
+        return
+      }
+      //  3.让数据结构与接口对应
+      attrForm.attrValueList.forEach(item => {
+        item.attrId = category3Id
+        delete item.isEdit
+      })
+      //  4.成功后
+      try {
+        await this.$API.attrCategory.saveAttrCategory(attrForm)
+        this.$message.success('保存成功！')
+        this.isShow = true
+        this.getAttrCategory()
+      } catch (error) {
+        this.$message.error('保存失败！')
+      }
+    }
+  },
+  watch: {
+    isShow(newValue) {
+      if (newValue) {
+        this.attrForm = reseForm()
+      }
     }
   }
 }

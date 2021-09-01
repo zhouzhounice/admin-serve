@@ -1,6 +1,11 @@
 <template>
   <div>
-    <el-form :inline="true" class="demo-form-inline" :model="cForm">
+    <el-form
+      :inline="true"
+      class="demo-form-inline"
+      :model="cForm"
+      :disabled="!isShow"
+    >
       <el-form-item label="一级分类" value="first">
         <el-select
           placeholder="请选择"
@@ -49,6 +54,9 @@
 <script>
 export default {
   name: 'CategorySelector',
+  props: {
+    isShow: Boolean
+  },
   data() {
     return {
       cForm: {

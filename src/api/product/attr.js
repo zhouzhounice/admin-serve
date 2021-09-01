@@ -22,5 +22,12 @@ export default {
   // 删除某个商品属性
   deleteAttrCategory(attrId) {
     return request.delete(`/admin/product/deleteAttr/${attrId}`)
+  },
+  saveAttrCategory(data) {
+    return request({
+      url: `/admin/product/saveAttrInfo`,
+      method: 'POST',
+      data
+    })
   }
 }
