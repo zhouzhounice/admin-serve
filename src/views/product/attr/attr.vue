@@ -9,7 +9,11 @@
     <el-card class="box-card" style="margin:10px 20px">
       <div v-show="isShow">
         <!-- 添加按钮 -->
-        <el-button type="primary" icon="el-icon-plus" @click="showAddAttr"
+        <el-button
+          type="primary"
+          icon="el-icon-plus"
+          @click="showAddAttr"
+          :disabled="!category3Id"
           >添加属性</el-button
         >
         <!-- 商品显示列表 -->
