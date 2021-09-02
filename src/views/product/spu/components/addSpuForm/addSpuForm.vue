@@ -59,7 +59,11 @@
           :key="item.id"
         ></el-option>
       </el-select>
-      <el-button type="primary" icon="el-icon-plus" @click="addAttrSale"
+      <el-button
+        type="primary"
+        icon="el-icon-plus"
+        @click="addAttrSale"
+        :disabled="!spuSaleArrts"
         >添加销售属性</el-button
       >
       <el-table
@@ -78,7 +82,7 @@
         </el-table-column>
         <el-table-column label="属性值列表">
           <template slot-scope="{ row }">
-            <div slot="reference" class="name-wrapper" @click="show(row)">
+            <div slot="reference" class="name-wrapper">
               <el-tag
                 style="margin:0 5px"
                 closable
@@ -89,12 +93,11 @@
               >
               <el-input
                 class="input-new-tag"
-                v-if="inputVisible"
-                v-model="inputValue"
+                v-if="row.inputVisible"
+                v-model="row.inputValue"
                 ref="saveTagInput"
                 size="small"
-                @keyup.enter.native="handleInputConfirm"
-                @blur="handleInputConfirm"
+                @blur="handleInput(row)"
               >
               </el-input>
               <el-button
@@ -102,7 +105,7 @@
                 class="button-new-tag"
                 size="small"
                 @click="showInput(row)"
-                >+ New Tag</el-button
+                >+ 添加</el-button
               >
             </div>
           </template>
@@ -144,9 +147,7 @@ export default {
       spuSaleBaseList: [],
       tradeMarkList: [],
       dialogImageUrl: '',
-      dialogVisible: false,
-      inputVisible: false,
-      inputValue: ''
+      dialogVisible: false
     }
   },
   methods: {
@@ -197,21 +198,37 @@ export default {
       const { data: list } = await this.$API.trademark.getTrademarkList()
       this.tradeMarkList = list
     },
-    show(row) {},
     showInput(row) {
-      this.inputVisible = true
+      // this.inputVisible = true
+      this.$set(row, 'inputVisible', true)
       this.$nextTick(_ => {
         this.$refs.saveTagInput.$refs.input.focus()
       })
     },
     // 添加标签相关函数
-    handleInputConfirm() {
-      let inputValue = this.inputValue
+    handleInput(row) {
+      // 收集数据
+      const { inputValue, baseSaleAttrId } = row
+      // 判断属性值是否为空并且添加在页面
       if (inputValue) {
-        this.dynamicTags.push(inputValue)
+        const repetition = row.spuSaleAttrValueList.some(item => {
+          return item.saleAttrValueName === inputValue
+        })
+        if (repetition) {
+          this.$message.error('属性值不能重复！')
+          row.inputVisible = false
+          row.inputValue = ''
+          return
+        }
+        row.spuSaleAttrValueList.push({
+          baseSaleAttrId,
+          saleAttrValueName: inputValue
+        })
       }
-      this.inputVisible = false
-      this.inputValue = ''
+      row.inputVisible = false
+
+      row.inputValue = ''
+      // 判断属性值是否重复
     },
     // 添加销售属性按钮事件
     addAttrSale() {
