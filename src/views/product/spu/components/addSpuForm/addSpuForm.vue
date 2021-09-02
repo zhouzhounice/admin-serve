@@ -44,11 +44,24 @@
     </el-form-item>
     <!-- 销售属性 -->
     <el-form-item label="销售属性">
-      <el-select v-model="spuList.tmId" placeholder="还剩2个销售属性">
-        <el-option label="小米" value="1"></el-option>
-        <el-option label="苹果" value="2"></el-option>
+      <el-select
+        v-model="spuSaleArrts"
+        :placeholder="
+          unUseAttr.length
+            ? `还剩${unUseAttr.length}个销售属性`
+            : `没有可添加的销售属性`
+        "
+      >
+        <el-option
+          :label="item.name"
+          :value="`${item.name}:${item.id}`"
+          v-for="item in unUseAttr"
+          :key="item.id"
+        ></el-option>
       </el-select>
-      <el-button type="primary" icon="el-icon-plus">添加销售属性</el-button>
+      <el-button type="primary" icon="el-icon-plus" @click="addAttrSale"
+        >添加销售属性</el-button
+      >
       <el-table
         style="width: 100%;margin:20px 0"
         border
@@ -96,7 +109,7 @@
         </el-table-column>
         <el-table-column label="操作" width="180">
           <template slot-scope="{ row }">
-            <el-popconfirm :title="`确定删除${row.saleAttrValueName}吗？`">
+            <el-popconfirm :title="`确定删除${row.saleAttrName}吗？`">
               <HintButton
                 slot="reference"
                 title="删除属性值"
@@ -123,10 +136,12 @@ export default {
         description: '',
         spuName: '',
         tmId: '',
-        spuImageList: []
+        spuImageList: [],
+        spuSaleAttrList: []
       },
+      spuSaleArrts: '',
       spuImgList: [],
-      spuSaleAttrList: [],
+      spuSaleBaseList: [],
       tradeMarkList: [],
       dialogImageUrl: '',
       dialogVisible: false,
@@ -175,22 +190,21 @@ export default {
     // 请求销售列表
     async spuSaleList() {
       const { data: list } = await this.$API.SPU.reqGetBaseSaleAttrList()
-      this.spuSaleAttrList = list
+      this.spuSaleBaseList = list
     },
     // 请求品牌列表
     async getTrademarkList() {
       const { data: list } = await this.$API.trademark.getTrademarkList()
       this.tradeMarkList = list
     },
-    show(row) {
-      console.log(row.spuSaleAttrValueList)
-    },
+    show(row) {},
     showInput(row) {
       this.inputVisible = true
       this.$nextTick(_ => {
         this.$refs.saveTagInput.$refs.input.focus()
       })
     },
+    // 添加标签相关函数
     handleInputConfirm() {
       let inputValue = this.inputValue
       if (inputValue) {
@@ -198,6 +212,40 @@ export default {
       }
       this.inputVisible = false
       this.inputValue = ''
+    },
+    // 添加销售属性按钮事件
+    addAttrSale() {
+      // 收集数据
+      // 整理数据
+      const [saleAttrName, baseSaleAttrId] = this.spuSaleArrts.split(':')
+      // 将数据展示在表格中
+      this.spuList.spuSaleAttrList.unshift({
+        baseSaleAttrId,
+        saleAttrName,
+        spuSaleAttrValueList: []
+      })
+      this.spuSaleArrts = ''
+    }
+  },
+  computed: {
+    // 通过计算属性对比没有使用过的销售属性
+    unUseAttr() {
+      const { spuList, spuSaleBaseList } = this
+      const { spuSaleAttrList } = spuList
+      // 总共有的销售属性 spuSaleBaseList 已使用的销售属性 spuSaleAttrList
+      // 思路：
+      /*
+    1.将已使用的销售属性放在一个对象中并且给它属性值为true
+    2.将总共的销售属性遍历筛选，筛选出的值为false的属性就是未使用的销售属性
+    */
+      const baseObj = {}
+      spuSaleAttrList.forEach(item => {
+        baseObj[item.baseSaleAttrId] = true
+      })
+      const unUseList = spuSaleBaseList.filter(item => {
+        return !baseObj[item.id]
+      })
+      return unUseList
     }
   }
 }

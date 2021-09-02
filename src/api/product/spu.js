@@ -21,11 +21,11 @@ export default {
   },
 
   // 添加spu
-  reqSaveSpu(data) {
+  reqSaveSpu(obj) {
     return request({
       url: `/admin/product/saveSpuInfo`,
       method: 'POST',
-      data
+      obj
     })
   },
 
