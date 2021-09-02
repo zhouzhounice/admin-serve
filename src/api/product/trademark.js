@@ -19,5 +19,9 @@ export default {
   // GET /admin/product/baseTrademark/{page}/{limit} 分页列表
   getTradeMark(page, limit) {
     return request.get(`/admin/product/baseTrademark/${page}/${limit}`)
+  },
+  // GET /admin/product/baseTrademark/getTrademarkList
+  getTrademarkList() {
+    return request.get(`/admin/product/baseTrademark/getTrademarkList`)
   }
 }

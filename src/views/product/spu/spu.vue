@@ -33,7 +33,7 @@
           <el-table-column label="SPU描述" align="center" prop="description">
           </el-table-column>
           <el-table-column label="操作">
-            <template>
+            <template slot-scope="{ row }">
               <div>
                 <HintButton
                   title="添加SKU"
@@ -45,7 +45,7 @@
                   title="修改SPU"
                   type="primary"
                   icon="el-icon-edit"
-                  @click="showSpuList"
+                  @click="showSpuList(row)"
                 />
                 <HintButton title="查看SKU" type="info" icon="el-icon-view" />
                 <HintButton
@@ -63,13 +63,13 @@
           :total="total"
           :current-page="page"
           :page-size="limit"
-          :page-sizes="[2, 4, 6]"
+          :page-sizes="[4, 6, 8]"
           layout="prev,pager,next,jumper,->,sizes,total"
           @current-change="handleCurrentChange"
           @size-change="handleSizeChange"
         />
       </div>
-      <SpuForm v-show="isShowSpu">添加SPU</SpuForm>
+      <SpuForm ref="spuForm" v-show="isShowSpu">添加SPU</SpuForm>
       <SkuForm v-show="isShowSku">添加SKU</SkuForm>
     </el-card>
   </div>
@@ -84,14 +84,19 @@ export default {
   data() {
     return {
       total: 3,
-      page: 3,
-      limit: 3,
+      page: 1,
+      limit: 8,
       category1Id: '',
       category2Id: '',
       category3Id: '',
-      spuList: [],
       isShowSpu: false,
-      isShowSku: true
+      isShowSku: false,
+      spuList: {
+        category3Id: '',
+        description: '',
+        spuName: '',
+        tmId: ''
+      }
     }
   },
   methods: {
@@ -129,8 +134,9 @@ export default {
     showSkuList() {
       this.isShowSku = true
     },
-    showSpuList() {
+    showSpuList(row) {
       this.isShowSpu = true
+      this.$refs.spuForm.initUpdateSpuForm(row)
     }
   },
   computed: {

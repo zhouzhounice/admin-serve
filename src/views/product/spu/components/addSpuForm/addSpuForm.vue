@@ -6,9 +6,13 @@
     </el-form-item>
     <!-- SPU品牌 -->
     <el-form-item label="SPU品牌">
-      <el-select v-model="spuList.tmId" placeholder="请选择活动区域">
-        <el-option label="小米" value="1"></el-option>
-        <el-option label="苹果" value="2"></el-option>
+      <el-select v-model="spuList.tmId" placeholder="请选择品牌">
+        <el-option
+          :label="tmName"
+          :value="tm.id"
+          v-for="tm in tradeMarkList"
+          :key="tm.id"
+        ></el-option>
       </el-select>
     </el-form-item>
     <!-- 品牌描述 -->
@@ -26,6 +30,7 @@
         list-type="picture-card"
         :on-preview="handlePictureCardPreview"
         :on-remove="handleRemove"
+        :file-list="spuImgList"
       >
         <i class="el-icon-plus"></i>
         <div class="el-upload__tip" slot="tip">
@@ -43,19 +48,44 @@
         <el-option label="苹果" value="2"></el-option>
       </el-select>
       <el-button type="primary" icon="el-icon-plus">添加销售属性</el-button>
-      <el-table style="width: 100%;margin:20px 0" border>
+      <el-table
+        style="width: 100%;margin:20px 0"
+        border
+        :data="spuList.spuSaleAttrList"
+      >
         <el-table-column label="序号" width="80" type="index" align="center">
         </el-table-column>
-        <el-table-column label="属性名" width="180" align="center">
+        <el-table-column
+          label="属性名"
+          width="180"
+          align="center"
+          prop="saleAttrName"
+        >
         </el-table-column>
-        <el-table-column label="属性值列表"></el-table-column>
+        <el-table-column label="属性值列表">
+          <template slot-scope="{ row }">
+            <div slot="reference" class="name-wrapper" @click="show(row)">
+              <el-tag
+                style="margin:0 5px"
+                size="medium"
+                v-for="item in row.spuSaleAttrValueList"
+                :key="item.id"
+                >{{ item.saleAttrValueName }}</el-tag
+              >
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="180">
-          <HintButton
-            slot="reference"
-            title="删除属性值"
-            type="danger"
-            icon="el-icon-delete"
-          />
+          <template slot-scope="{ row }">
+            <el-popconfirm :title="`确定删除${row.saleAttrValueName}吗？`">
+              <HintButton
+                slot="reference"
+                title="删除属性值"
+                type="danger"
+                icon="el-icon-delete"
+              />
+            </el-popconfirm>
+          </template>
         </el-table-column>
       </el-table>
       <el-button type="primary">确定</el-button>
@@ -70,38 +100,14 @@ export default {
   data() {
     return {
       spuList: {
-        category3Id: '', // 商品分类3的id
-        spuName: '', // 商品名称
-        description: '', // 商品分类描述
-        // id: 0, 添加商品用不到，修改商品用的到
-        tmId: '', // 品牌id
-        spuImageList: [
-          // 商品图片列表
-          /* {
-            id: 0,
-            imgName: 'string',
-            imgUrl: 'string',
-            spuId: 0
-          } */
-        ],
-        spuSaleAttrList: [
-          // 商品属性列表
-          /* {
-            baseSaleAttrId: 0,
-            id: 0,
-            saleAttrName: 'string',
-            spuId: 0,
-            spuSaleAttrValueList: [
-              {
-                baseSaleAttrId: 0,
-                id: 0,
-                isChecked: 'string',
-                saleAttrName: 'string',
-                saleAttrValueName: 'string',
-                spuId: 0
-              } */
-        ]
+        category3Id: '',
+        description: '',
+        spuName: '',
+        tmId: ''
       },
+      spuImgList: [],
+      spuSaleAttrList: [],
+      tradeMarkList: [],
       dialogImageUrl: '',
       dialogVisible: false
     }
@@ -114,6 +120,45 @@ export default {
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
       this.dialogVisible = true
+    },
+    // 动态渲染更新spu列表页面 初始化添加spu页面
+    initUpdateSpuForm(row) {
+      // 1.获取整个spu列表
+      // 2.获取整个spu品牌管理
+      // 3.获取图片列表
+      // 4.获取销售列表
+      const { id } = row
+      this.getAllSpuList(id)
+      this.spuImageList(id)
+      this.spuSaleList()
+      this.getTrademarkList()
+    },
+    // 发送请求，请求被点击商品的信息
+    async getAllSpuList(id) {
+      const { data } = await this.$API.SPU.reqGetSpuInfo(id)
+      this.spuList = data
+    },
+    // 请求图片列表
+    async spuImageList(id) {
+      const { data: list } = await this.$API.SPU.reqGetSpuImageList(id)
+      list.forEach(imgObj => {
+        imgObj.name = imgObj.imgName
+        imgObj.url = imgObj.imgUrl
+      })
+      this.spuImgList = list
+    },
+    // 请求销售列表
+    async spuSaleList() {
+      const { data: list } = await this.$API.SPU.reqGetBaseSaleAttrList()
+      this.spuSaleAttrList = list
+    },
+    // 请求品牌列表
+    async getTrademarkList() {
+      const { data: list } = await this.$API.trademark.getTrademarkList()
+      this.tradeMarkList = list
+    },
+    show(row) {
+      console.log(row.spuSaleAttrValueList)
     }
   }
 }
