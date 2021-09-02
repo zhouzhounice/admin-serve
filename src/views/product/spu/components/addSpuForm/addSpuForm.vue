@@ -26,8 +26,9 @@
     <!-- SPU图片 -->
     <el-form-item label="SPU图片">
       <el-upload
-        action="https://jsonplaceholder.typicode.com/posts/"
+        action="/dev-api/admin/product/fileUpload"
         list-type="picture-card"
+        :on-success="handleImgSuccess"
         :on-preview="handlePictureCardPreview"
         :on-remove="handleRemove"
         :file-list="spuImgList"
@@ -67,10 +68,28 @@
             <div slot="reference" class="name-wrapper" @click="show(row)">
               <el-tag
                 style="margin:0 5px"
+                closable
                 size="medium"
                 v-for="item in row.spuSaleAttrValueList"
                 :key="item.id"
                 >{{ item.saleAttrValueName }}</el-tag
+              >
+              <el-input
+                class="input-new-tag"
+                v-if="inputVisible"
+                v-model="inputValue"
+                ref="saveTagInput"
+                size="small"
+                @keyup.enter.native="handleInputConfirm"
+                @blur="handleInputConfirm"
+              >
+              </el-input>
+              <el-button
+                v-else
+                class="button-new-tag"
+                size="small"
+                @click="showInput(row)"
+                >+ New Tag</el-button
               >
             </div>
           </template>
@@ -103,23 +122,29 @@ export default {
         category3Id: '',
         description: '',
         spuName: '',
-        tmId: ''
+        tmId: '',
+        spuImageList: []
       },
       spuImgList: [],
       spuSaleAttrList: [],
       tradeMarkList: [],
       dialogImageUrl: '',
-      dialogVisible: false
+      dialogVisible: false,
+      inputVisible: false,
+      inputValue: ''
     }
   },
   methods: {
-    // 图片上传的两个函数
+    // 关于图片上传的三个函数
     handleRemove(file, fileList) {
-      console.log(file, fileList)
+      this.spuList.spuImageList = fileList
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
       this.dialogVisible = true
+    },
+    handleImgSuccess(response, file, fileList) {
+      this.spuList.spuImageList = fileList
     },
     // 动态渲染更新spu列表页面 初始化添加spu页面
     initUpdateSpuForm(row) {
@@ -159,8 +184,35 @@ export default {
     },
     show(row) {
       console.log(row.spuSaleAttrValueList)
+    },
+    showInput(row) {
+      this.inputVisible = true
+      this.$nextTick(_ => {
+        this.$refs.saveTagInput.$refs.input.focus()
+      })
+    },
+    handleInputConfirm() {
+      let inputValue = this.inputValue
+      if (inputValue) {
+        this.dynamicTags.push(inputValue)
+      }
+      this.inputVisible = false
+      this.inputValue = ''
     }
   }
 }
 </script>
-<style></style>
+<style>
+.button-new-tag {
+  margin-left: 10px;
+  height: 32px;
+  line-height: 30px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+.input-new-tag {
+  width: 90px;
+  margin-left: 10px;
+  vertical-align: bottom;
+}
+</style>
