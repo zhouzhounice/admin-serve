@@ -8,7 +8,7 @@
     <el-form-item label="SPU品牌">
       <el-select v-model="spuList.tmId" placeholder="请选择品牌">
         <el-option
-          :label="tmName"
+          :label="tm.tmName"
           :value="tm.id"
           v-for="tm in tradeMarkList"
           :key="tm.id"
@@ -111,8 +111,11 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" width="180">
-          <template slot-scope="{ row }">
-            <el-popconfirm :title="`确定删除${row.saleAttrName}吗？`">
+          <template slot-scope="{ row, $index }">
+            <el-popconfirm
+              :title="`确定删除${row.saleAttrName}吗？`"
+              @onConfirm="deleteAttr($index)"
+            >
               <HintButton
                 slot="reference"
                 title="删除属性值"
@@ -124,7 +127,7 @@
         </el-table-column>
       </el-table>
       <el-button type="primary">确定</el-button>
-      <el-button plain>取消</el-button>
+      <el-button plain @click="cancel">取消</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -132,6 +135,7 @@
 <script>
 export default {
   name: 'SPuForm',
+  props: ['visible'],
   data() {
     return {
       spuList: {
@@ -161,6 +165,11 @@ export default {
     },
     handleImgSuccess(response, file, fileList) {
       this.spuList.spuImageList = fileList
+    },
+    // 动态渲染添加spu列表页面 初始化添加spu页面
+    initAddSpuForm() {
+      this.spuSaleList()
+      this.getTrademarkList()
     },
     // 动态渲染更新spu列表页面 初始化添加spu页面
     initUpdateSpuForm(row) {
@@ -242,6 +251,16 @@ export default {
         spuSaleAttrValueList: []
       })
       this.spuSaleArrts = ''
+    },
+    deleteAttr($index) {
+      this.spuList.spuSaleAttrList.splice($index, 1)
+    },
+    cancel() {
+      this.$emit('update:visible', false)
+      this.resetData()
+    },
+    resetData() {
+      Object.assign(this.$data, this.$options.data())
     }
   },
   computed: {

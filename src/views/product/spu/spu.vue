@@ -69,7 +69,9 @@
           @size-change="handleSizeChange"
         />
       </div>
-      <SpuForm ref="spuForm" v-show="isShowSpu">添加SPU</SpuForm>
+      <SpuForm ref="spuForm" v-show="isShowSpu" :visible.sync="isShowSpu"
+        >添加SPU</SpuForm
+      >
       <SkuForm v-show="isShowSku">添加SKU</SkuForm>
     </el-card>
   </div>
