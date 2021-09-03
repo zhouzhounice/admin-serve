@@ -28,6 +28,14 @@ export default {
       obj
     })
   },
+  // 修改spu
+  reqUpdateSpu(obj) {
+    return request({
+      url: `/admin/product/updateSpuInfo`,
+      method: 'POST',
+      obj
+    })
+  },
 
   // 根据spuId获取spu数据
   reqGetSpuInfo(spuId) {

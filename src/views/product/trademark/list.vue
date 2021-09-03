@@ -1,9 +1,11 @@
 <template>
   <div>
     <!-- 添加按钮 -->
-    <el-button type="primary" icon="el-icon-plus" @click="showDialog"
-      >添加</el-button
-    >
+    <el-button
+      type="primary"
+      icon="el-icon-plus"
+      @click="showDialog"
+    >添加</el-button>
     <!-- 商品显示列表 -->
     <el-table border style="width: 100%;margin:20px 0" :data="trademarkList">
       <el-table-column label="序号" width="80" align="center" type="index" />
@@ -15,7 +17,7 @@
       />
       <el-table-column label="品牌LOGO" align="center">
         <template slot-scope="{ row }">
-          <img :src="row.logoUrl" style="width:100px;height:80px" />
+          <img :src="row.logoUrl" style="width:100px;height:80px">
         </template>
       </el-table-column>
       <el-table-column label="操作">
@@ -26,15 +28,13 @@
               size="mini"
               icon="el-icon-edit"
               @click="showDialog(row)"
-              >编辑</el-button
-            >
+            >编辑</el-button>
             <el-button
               size="mini"
               type="danger"
               icon="el-icon-delete"
               @click="deleteTardeMark(row)"
-              >删除</el-button
-            >
+            >删除</el-button>
           </div>
         </template>
       </el-table-column>
@@ -60,7 +60,7 @@
       :title="tmForm.id ? '修改品牌' : '添加品牌'"
       :visible.sync="dialogFormVisible"
     >
-      <el-form :model="tmForm" :rules="rules" ref="ruleForm">
+      <el-form ref="ruleForm" :model="tmForm" :rules="rules">
         <el-form-item
           label="品牌名称"
           :label-width="formLabelWidth"
@@ -80,9 +80,9 @@
             :on-success="handleAvatarSuccess"
             :before-upload="beforeAvatarUpload"
           >
-            <img v-if="tmForm.logoUrl" :src="tmForm.logoUrl" class="avatar" />
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-            <div class="el-upload__tip" slot="tip">
+            <img v-if="tmForm.logoUrl" :src="tmForm.logoUrl" class="avatar">
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
+            <div slot="tip" class="el-upload__tip">
               只能上传jpg/png文件，且不超过200kb
             </div>
           </el-upload>
@@ -198,7 +198,7 @@ export default {
       if (row.id) {
         this.tmForm = row
       }
-      //点击添加按钮使得模态框展示
+      // 点击添加按钮使得模态框展示
       this.dialogFormVisible = true
     },
     // 删除商品的事件
@@ -209,7 +209,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       })
-        .then(async () => {
+        .then(async() => {
           await this.$API.trademark.deleteTradeMark(id)
           // 重新渲染商品列表
           this.getTradeMark()

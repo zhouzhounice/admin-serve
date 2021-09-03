@@ -1,10 +1,7 @@
 <template>
   <div>
     <el-card class="box-card" style="margin:0 20px">
-      <CategorySelector
-        @categoryChange="categoryChange"
-        :isShow="isShow"
-      ></CategorySelector>
+      <CategorySelector :is-show="isShow" @categoryChange="categoryChange" />
     </el-card>
     <el-card class="box-card" style="margin:10px 20px">
       <div v-show="isShow">
@@ -30,8 +27,7 @@
             align="center"
             prop="spuName"
           />
-          <el-table-column label="SPU描述" align="center" prop="description">
-          </el-table-column>
+          <el-table-column label="SPU描述" align="center" prop="description" />
           <el-table-column label="操作">
             <template slot-scope="{ row }">
               <div>
@@ -69,7 +65,11 @@
           @size-change="handleSizeChange"
         />
       </div>
-      <SpuForm ref="spuForm" v-show="isShowSpu" :visible.sync="isShowSpu"
+      <SpuForm
+        v-show="isShowSpu"
+        ref="spuForm"
+        :visible.sync="isShowSpu"
+        :category3Id="category3Id"
         >添加SPU</SpuForm
       >
       <SkuForm v-show="isShowSku">添加SKU</SkuForm>
@@ -99,6 +99,13 @@ export default {
         spuName: '',
         tmId: ''
       }
+    }
+  },
+  computed: {
+    // 利用监听属性，实现了三个页面的相互切换
+    isShow: function() {
+      const { isShowSpu, isShowSku } = this
+      return !isShowSpu && !isShowSku
     }
   },
   methods: {
@@ -138,14 +145,11 @@ export default {
     },
     showSpuList(row) {
       this.isShowSpu = true
-      this.$refs.spuForm.initUpdateSpuForm(row)
-    }
-  },
-  computed: {
-    // 利用监听属性，实现了三个页面的相互切换
-    isShow: function() {
-      const { isShowSpu, isShowSku } = this
-      return !isShowSpu && !isShowSku
+      if (row.id) {
+        this.$refs.spuForm.initUpdateSpuForm(row)
+      } else {
+        this.$refs.spuForm.initAddSpuForm()
+      }
     }
   }
 }

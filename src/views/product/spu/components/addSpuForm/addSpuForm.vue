@@ -2,26 +2,22 @@
   <el-form ref="form" :model="spuList" label-width="80px">
     <!-- SPU名称 -->
     <el-form-item label="SPU名称">
-      <el-input v-model="spuList.spuName"></el-input>
+      <el-input v-model="spuList.spuName" />
     </el-form-item>
     <!-- SPU品牌 -->
     <el-form-item label="SPU品牌">
       <el-select v-model="spuList.tmId" placeholder="请选择品牌">
         <el-option
-          :label="tm.tmName"
-          :value="tm.id"
           v-for="tm in tradeMarkList"
           :key="tm.id"
-        ></el-option>
+          :label="tm.tmName"
+          :value="tm.id"
+        />
       </el-select>
     </el-form-item>
     <!-- 品牌描述 -->
     <el-form-item label="品牌描述">
-      <el-input
-        type="textarea"
-        v-model="spuList.description"
-        rows="4"
-      ></el-input>
+      <el-input v-model="spuList.description" type="textarea" rows="4" />
     </el-form-item>
     <!-- SPU图片 -->
     <el-form-item label="SPU图片">
@@ -33,8 +29,8 @@
         :on-remove="handleRemove"
         :file-list="spuImgList"
       >
-        <i class="el-icon-plus"></i>
-        <div class="el-upload__tip" slot="tip">
+        <i class="el-icon-plus" />
+        <div slot="tip" class="el-upload__tip">
           只能上传jpg/png文件，且不超过500kb
         </div>
       </el-upload>
@@ -53,17 +49,17 @@
         "
       >
         <el-option
-          :label="item.name"
-          :value="`${item.name}:${item.id}`"
           v-for="item in unUseAttr"
           :key="item.id"
-        ></el-option>
+          :label="item.name"
+          :value="`${item.name}:${item.id}`"
+        />
       </el-select>
       <el-button
         type="primary"
         icon="el-icon-plus"
-        @click="addAttrSale"
         :disabled="!spuSaleArrts"
+        @click="addAttrSale"
         >添加销售属性</el-button
       >
       <el-table
@@ -71,35 +67,32 @@
         border
         :data="spuList.spuSaleAttrList"
       >
-        <el-table-column label="序号" width="80" type="index" align="center">
-        </el-table-column>
+        <el-table-column label="序号" width="80" type="index" align="center" />
         <el-table-column
           label="属性名"
           width="180"
           align="center"
           prop="saleAttrName"
-        >
-        </el-table-column>
+        />
         <el-table-column label="属性值列表">
           <template slot-scope="{ row }">
             <div slot="reference" class="name-wrapper">
               <el-tag
+                v-for="item in row.spuSaleAttrValueList"
+                :key="item.id"
                 style="margin:0 5px"
                 closable
                 size="medium"
-                v-for="item in row.spuSaleAttrValueList"
-                :key="item.id"
                 >{{ item.saleAttrValueName }}</el-tag
               >
               <el-input
-                class="input-new-tag"
                 v-if="row.inputVisible"
-                v-model="row.inputValue"
                 ref="saveTagInput"
+                v-model="row.inputValue"
+                class="input-new-tag"
                 size="small"
                 @blur="handleInput(row)"
-              >
-              </el-input>
+              />
               <el-button
                 v-else
                 class="button-new-tag"
@@ -126,7 +119,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-button type="primary">确定</el-button>
+      <el-button type="primary" @click="save">确定</el-button>
       <el-button plain @click="cancel">取消</el-button>
     </el-form-item>
   </el-form>
@@ -135,7 +128,7 @@
 <script>
 export default {
   name: 'SPuForm',
-  props: ['visible'],
+  props: ['visible', 'category3Id'],
   data() {
     return {
       spuList: {
@@ -152,6 +145,27 @@ export default {
       tradeMarkList: [],
       dialogImageUrl: '',
       dialogVisible: false
+    }
+  },
+  computed: {
+    // 通过计算属性对比没有使用过的销售属性
+    unUseAttr() {
+      const { spuList, spuSaleBaseList } = this
+      const { spuSaleAttrList } = spuList
+      // 总共有的销售属性 spuSaleBaseList 已使用的销售属性 spuSaleAttrList
+      // 思路：
+      /*
+    1.将已使用的销售属性放在一个对象中并且给它属性值为true
+    2.将总共的销售属性遍历筛选，筛选出的值为false的属性就是未使用的销售属性
+    */
+      const baseObj = {}
+      spuSaleAttrList.forEach(item => {
+        baseObj[item.baseSaleAttrId] = true
+      })
+      const unUseList = spuSaleBaseList.filter(item => {
+        return !baseObj[item.id]
+      })
+      return unUseList
     }
   },
   methods: {
@@ -255,33 +269,53 @@ export default {
     deleteAttr($index) {
       this.spuList.spuSaleAttrList.splice($index, 1)
     },
+    // 取消按钮 返回列表页
     cancel() {
       this.$emit('update:visible', false)
       this.resetData()
     },
+    // 重置添加Spu页面
     resetData() {
       Object.assign(this.$data, this.$options.data())
-    }
-  },
-  computed: {
-    // 通过计算属性对比没有使用过的销售属性
-    unUseAttr() {
-      const { spuList, spuSaleBaseList } = this
-      const { spuSaleAttrList } = spuList
-      // 总共有的销售属性 spuSaleBaseList 已使用的销售属性 spuSaleAttrList
-      // 思路：
-      /*
-    1.将已使用的销售属性放在一个对象中并且给它属性值为true
-    2.将总共的销售属性遍历筛选，筛选出的值为false的属性就是未使用的销售属性
-    */
-      const baseObj = {}
-      spuSaleAttrList.forEach(item => {
-        baseObj[item.baseSaleAttrId] = true
+    },
+    // 保存并且上传数据
+    async save() {
+      // 1.收集数据 3id spuForm spuImgList
+      const { category3Id, spuList, spuImgList } = this
+      spuList.category3Id = category3Id
+      // 2.整理数据
+      // 2.1 删除图片列表中不用的属性并且将上传的图片的真实url填入
+      spuList.spuImageList = spuList.spuImageList || spuImgList
+      spuList.spuImageList.map(item => {
+        if (item) {
+          delete item.name
+          delete item.url
+          return item
+        } else {
+          return {
+            imgName: item.name,
+            imgUrl: item.response.data
+          }
+        }
       })
-      const unUseList = spuSaleBaseList.filter(item => {
-        return !baseObj[item.id]
+      // 2.2 将销售属性的属性标签列表中不用的属性删除
+      spuList.spuSaleAttrList.forEach(item => {
+        delete item.inputVisible
+        delete item.inputValue
       })
-      return unUseList
+      console.log(spuList)
+      // 3.发送请求，将数据传入服务器中
+      try {
+        await this.$API.SPU.reqSaveSpu(spuList)
+        this.$message({
+          message: '保存成功！！',
+          type: 'success'
+        })
+        this.$emit('update:visible', false)
+        this.resetData()
+      } catch (error) {
+        this.$message.error('保存失败', error)
+      }
     }
   }
 }
