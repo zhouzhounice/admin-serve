@@ -171,6 +171,7 @@ export default {
   methods: {
     // 关于图片上传的三个函数
     handleRemove(file, fileList) {
+      console.log(fileList)
       this.spuList.spuImageList = fileList
     },
     handlePictureCardPreview(file) {
@@ -210,6 +211,7 @@ export default {
         imgObj.url = imgObj.imgUrl
       })
       this.spuImgList = list
+      console.log(this.spuImgList)
     },
     // 请求销售列表
     async spuSaleList() {
@@ -285,9 +287,10 @@ export default {
       spuList.category3Id = category3Id
       // 2.整理数据
       // 2.1 删除图片列表中不用的属性并且将上传的图片的真实url填入
+
       spuList.spuImageList = spuList.spuImageList || spuImgList
-      spuList.spuImageList.map(item => {
-        if (item) {
+      const obj = spuList.spuImageList.map(item => {
+        if (item.imgUrl) {
           delete item.name
           delete item.url
           return item
@@ -298,13 +301,14 @@ export default {
           }
         }
       })
+      spuList.spuImageList = obj
+      console.log(spuList)
       // 2.2 将销售属性的属性标签列表中不用的属性删除
       spuList.spuSaleAttrList.forEach(item => {
         delete item.inputVisible
         delete item.inputValue
       })
-      console.log(spuList)
-      // 3.发送请求，将数据传入服务器中
+
       try {
         await this.$API.SPU.reqSaveSpu(spuList)
         this.$message({
