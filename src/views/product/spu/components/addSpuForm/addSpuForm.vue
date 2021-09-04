@@ -35,7 +35,7 @@
         </div>
       </el-upload>
       <el-dialog :visible.sync="dialogVisible">
-        <img width="100%" :src="dialogImageUrl" alt="" />
+        <img width="100%" :src="dialogImageUrl" alt="">
       </el-dialog>
     </el-form-item>
     <!-- 销售属性 -->
@@ -60,8 +60,7 @@
         icon="el-icon-plus"
         :disabled="!spuSaleArrts"
         @click="addAttrSale"
-        >添加销售属性</el-button
-      >
+      >添加销售属性</el-button>
       <el-table
         style="width: 100%;margin:20px 0"
         border
@@ -83,8 +82,7 @@
                 style="margin:0 5px"
                 closable
                 size="medium"
-                >{{ item.saleAttrValueName }}</el-tag
-              >
+              >{{ item.saleAttrValueName }}</el-tag>
               <el-input
                 v-if="row.inputVisible"
                 ref="saveTagInput"
@@ -98,8 +96,7 @@
                 class="button-new-tag"
                 size="small"
                 @click="showInput(row)"
-                >+ 添加</el-button
-              >
+              >+ 添加</el-button>
             </div>
           </template>
         </el-table-column>
@@ -211,7 +208,6 @@ export default {
         imgObj.url = imgObj.imgUrl
       })
       this.spuImgList = list
-      console.log(this.spuImgList)
     },
     // 请求销售列表
     async spuSaleList() {

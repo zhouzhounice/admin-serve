@@ -121,7 +121,6 @@ export default {
         } = await this.$API.SPU.reqGetSpuList({ page, limit, category3Id })
         this.total = total
         this.spuList = records
-        console.log(this.spuList)
       } catch (e) {
         console.log(e)
       }
