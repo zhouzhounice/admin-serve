@@ -31,7 +31,6 @@
     <el-form-item label="SPU图片">
       <el-table
         ref="multipleTable"
-        :data="skuList"
         tooltip-effect="dark"
         style="width: 100%"
         @selection-change="handleSelectionChange"

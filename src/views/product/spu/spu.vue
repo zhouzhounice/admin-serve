@@ -93,12 +93,7 @@ export default {
       category3Id: '',
       isShowSpu: false,
       isShowSku: false,
-      spuList: {
-        category3Id: '',
-        description: '',
-        spuName: '',
-        tmId: ''
-      }
+      spuList: []
     }
   },
   computed: {
@@ -126,6 +121,7 @@ export default {
         } = await this.$API.SPU.reqGetSpuList({ page, limit, category3Id })
         this.total = total
         this.spuList = records
+        console.log(this.spuList)
       } catch (e) {
         console.log(e)
       }
