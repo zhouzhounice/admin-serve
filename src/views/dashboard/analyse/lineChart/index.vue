@@ -9,35 +9,25 @@ import * as echarts from 'echarts'
 export default {
   name: 'LineChart',
   mounted() {
-    console.log(this.$refs.line)
     this.myEcharts = echarts.init(this.$refs.line)
     this.myEcharts.setOption({
       xAxis: {
-        // 等分
         type: 'category',
-        // 去掉两边留白
-        boundaryGap: false,
-        // 不显示横坐标
+        // 不显示
         show: false
       },
-      yAxis: {
-        show: false
-      },
+      yAxis: { show: false },
       series: {
         type: 'line',
+        data: [22, 12, 33, 15, 28, 44, 11, 23, 37],
         // 平滑曲线显示
         smooth: true,
-        // 拐点样式
+        // 折线拐点的样式
         itemStyle: {
           opacity: 0
         },
-        // 线样式
-        lineStyle: {
-          color: '#975fe4'
-        },
-        // 区域样式
+        // 区域的样式
         areaStyle: {
-          // 颜色渐变
           color: {
             type: 'linear',
             x: 0,
@@ -47,7 +37,7 @@ export default {
             colorStops: [
               {
                 offset: 0,
-                color: '#d3bcf4' // 0% 处的颜色
+                color: '#975fe4' // 0% 处的颜色
               },
               {
                 offset: 1,
@@ -57,14 +47,18 @@ export default {
             global: false // 缺省为 false
           }
         },
-        // 不响应和触发鼠标事件
+        // 线的样式
+        lineStyle: {
+          color: '#975fe4'
+        },
+        // 坐标轴是否是静态无法交互
         silent: true
       },
       grid: {
-        left: 0,
+        left: -20,
+        right: -20,
         top: 0,
-        bottom: 0,
-        right: 0
+        bottom: 0
       }
     })
   }
@@ -73,5 +67,6 @@ export default {
 <style>
 .charts {
   width: 100%;
+  height: 46px;
 }
 </style>
