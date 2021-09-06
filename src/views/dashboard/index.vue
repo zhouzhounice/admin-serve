@@ -3,6 +3,7 @@
     <Analyse />
     <Sales />
     <Monitor />
+    <Map />
   </div>
 </template>
 
@@ -11,13 +12,15 @@ import { mapGetters } from 'vuex'
 import Analyse from './analyse/index.vue'
 import Sales from './sales/index.vue'
 import Monitor from './monitor/index.vue'
+import Map from './map/index.vue'
 
 export default {
   name: 'Dashboard',
   components: {
     Analyse,
     Sales,
-    Monitor
+    Monitor,
+    Map
   },
   computed: {
     ...mapGetters(['name'])

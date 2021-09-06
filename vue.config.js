@@ -40,6 +40,8 @@ module.exports = {
       warnings: false,
       errors: true
     },
+    // 引入mock生效
+    after: require('./mock/mock-server.js'),
     // 配置代理服务器 拦截ajax请求并且解决跨域问题
     proxy: {
       '/dev-api': {
