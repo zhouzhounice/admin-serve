@@ -2,7 +2,7 @@
   <div class="dashboard-container">
     <Analyse />
     <Sales />
-    <HotSearch />
+    <Monitor />
   </div>
 </template>
 
@@ -10,14 +10,14 @@
 import { mapGetters } from 'vuex'
 import Analyse from './analyse/index.vue'
 import Sales from './sales/index.vue'
-import HotSearch from './hotSearch/index.vue'
+import Monitor from './monitor/index.vue'
 
 export default {
   name: 'Dashboard',
   components: {
     Analyse,
     Sales,
-    HotSearch
+    Monitor
   },
   computed: {
     ...mapGetters(['name'])
