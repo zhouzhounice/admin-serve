@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-/* 
+/*
 GET /admin/product/getCategory1
 getCategory1
 
