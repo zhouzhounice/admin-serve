@@ -6,8 +6,8 @@
         <div class="percent">
           <span>
             周同比
-            <span class="percent-value">55.67%</span>
           </span>
+          <span class="percent-value">55.67%</span>
           <svg
             t="1628558608250"
             class="icon"
@@ -24,7 +24,8 @@
               fill="#d81e06"
             />
           </svg>
-          <span class="subtext"> 日同比<span class="text">23.45% </span> </span>
+          <span class="subtext"> 日同比 </span>
+          <span class="text">23.45% </span>
           <svg
             t="1628558630690"
             class="icon"
@@ -57,6 +58,7 @@
     </el-col>
     <el-col :xs="24" :sm="12" :md="8" :lg="6" class="context">
       <CommonCard title="支付笔数" charts="12306">
+        <BarChart />
         <template #footer>
           <span>转化率 65%</span>
         </template>
@@ -64,6 +66,7 @@
     </el-col>
     <el-col :xs="24" :sm="12" :md="8" :lg="6" class="context">
       <CommonCard title="运营活动效果" charts="78%">
+        <ProgressChart />
         <template #footer>
           <div class="percent">
             <span>
@@ -115,15 +118,18 @@
 <script>
 import CommonCard from './commonCard'
 import LineChart from './lineChart/index.vue'
+import BarChart from './barChart/index.vue'
+import ProgressChart from './progressChart/index.vue'
 export default {
   name: 'Analyse',
-  components: { CommonCard, LineChart }
+  components: { CommonCard, LineChart, BarChart, ProgressChart }
 }
 </script>
 <style lang="scss" scoped>
 .percent {
   width: 100%;
   height: 46px;
+  font-size: 14px;
   display: flex;
   align-items: center;
 }
