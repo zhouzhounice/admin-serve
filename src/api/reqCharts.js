@@ -1,8 +1,8 @@
-import request from '@/utils/requestMock'
+import requestMock from '@/utils/requestMock'
 
-export default {
-  // 获取一级分类的数据
-  getChartsData() {
-    return request.get(`/getChartsData`)
-  }
+export function getChartsData() {
+  return requestMock({
+    url: '/getChartsData',
+    method: 'get'
+  })
 }
