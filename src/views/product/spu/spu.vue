@@ -11,7 +11,8 @@
           icon="el-icon-plus"
           :disabled="!category3Id"
           @click="showSpuList"
-        >添加SPU</el-button>
+          >添加SPU</el-button
+        >
         <!-- 商品显示列表 -->
         <el-table border style="width: 100%;margin:20px 0" :data="spuList">
           <el-table-column
@@ -68,9 +69,10 @@
         v-show="isShowSpu"
         ref="spuForm"
         :visible.sync="isShowSpu"
-        :category3id="category3Id"
+        :category3Id="category3Id"
         @success="successGetSpu"
-      >添加SPU</SpuForm>
+        >添加SPU</SpuForm
+      >
       <SkuForm v-show="isShowSku">添加SKU</SkuForm>
     </el-card>
   </div>
@@ -146,7 +148,9 @@ export default {
       }
     },
     successGetSpu() {
+      console.log(111)
       this.getSpuList()
+      console.log(111)
     }
   }
 }

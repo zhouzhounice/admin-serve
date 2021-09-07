@@ -308,21 +308,22 @@ export default {
       })
       console.log(spuList)
       try {
-        if (spuList.category3Id) {
+        if (spuList.id) {
           await this.$API.SPU.reqUpdateSpu(spuList)
         } else {
           await this.$API.SPU.reqSaveSpu(spuList)
         }
+
         this.$message({
           message: '保存成功！！',
           type: 'success'
         })
         // 保存成功后跳转到列表页面
         this.$emit('update:visible', false)
-        // 并且重置组件状态
-        this.resetData()
         // 通知父组件更新状态
         this.$emit('success')
+        // 并且重置组件状态
+        this.resetData()
       } catch (error) {
         this.$message.error('保存失败', error)
       }
