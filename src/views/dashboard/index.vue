@@ -27,7 +27,7 @@ export default {
     ...mapActions('dashboard', ['getChartsData'])
   },
   mounted() {
-    console.log(this.getChartsData())
+    this.getChartsData()
   },
   computed: {
     ...mapGetters(['name'])

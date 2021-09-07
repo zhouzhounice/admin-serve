@@ -35,7 +35,7 @@
         </div>
       </el-upload>
       <el-dialog :visible.sync="dialogVisible">
-        <img width="100%" :src="dialogImageUrl" alt="">
+        <img width="100%" :src="dialogImageUrl" alt="" />
       </el-dialog>
     </el-form-item>
     <!-- 销售属性 -->
@@ -60,7 +60,8 @@
         icon="el-icon-plus"
         :disabled="!spuSaleArrts"
         @click="addAttrSale"
-      >添加销售属性</el-button>
+        >添加销售属性</el-button
+      >
       <el-table
         style="width: 100%;margin:20px 0"
         border
@@ -77,12 +78,14 @@
           <template slot-scope="{ row }">
             <div slot="reference" class="name-wrapper">
               <el-tag
-                v-for="item in row.spuSaleAttrValueList"
+                v-for="(item, index) in row.spuSaleAttrValueList"
                 :key="item.id"
                 style="margin:0 5px"
                 closable
                 size="medium"
-              >{{ item.saleAttrValueName }}</el-tag>
+                @close="handleClose(row, index)"
+                >{{ item.saleAttrValueName }}</el-tag
+              >
               <el-input
                 v-if="row.inputVisible"
                 ref="saveTagInput"
@@ -96,7 +99,8 @@
                 class="button-new-tag"
                 size="small"
                 @click="showInput(row)"
-              >+ 添加</el-button>
+                >+ 添加</el-button
+              >
             </div>
           </template>
         </el-table-column>
@@ -168,7 +172,6 @@ export default {
   methods: {
     // 关于图片上传的三个函数
     handleRemove(file, fileList) {
-      console.log(fileList)
       this.spuList.spuImageList = fileList
     },
     handlePictureCardPreview(file) {
@@ -298,24 +301,36 @@ export default {
         }
       })
       spuList.spuImageList = obj
-      console.log(spuList)
       // 2.2 将销售属性的属性标签列表中不用的属性删除
       spuList.spuSaleAttrList.forEach(item => {
         delete item.inputVisible
         delete item.inputValue
       })
-
+      console.log(spuList)
       try {
-        await this.$API.SPU.reqSaveSpu(spuList)
+        if (spuList.category3Id) {
+          await this.$API.SPU.reqUpdateSpu(spuList)
+        } else {
+          await this.$API.SPU.reqSaveSpu(spuList)
+        }
         this.$message({
           message: '保存成功！！',
           type: 'success'
         })
+        // 保存成功后跳转到列表页面
         this.$emit('update:visible', false)
+        // 并且重置组件状态
         this.resetData()
+        // 通知父组件更新状态
+        this.$emit('success')
       } catch (error) {
         this.$message.error('保存失败', error)
       }
+    },
+    // 删除属性标签
+    handleClose(row, index) {
+      console.log(row, index)
+      row.spuSaleAttrValueList.splice(index, 1)
     }
   }
 }

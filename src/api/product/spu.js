@@ -25,15 +25,16 @@ export default {
     return request({
       url: `/admin/product/saveSpuInfo`,
       method: 'POST',
-      obj
+      data: obj
     })
   },
   // 修改spu
   reqUpdateSpu(obj) {
+    console.log(obj, 'obj')
     return request({
       url: `/admin/product/updateSpuInfo`,
       method: 'POST',
-      obj
+      data: obj
     })
   },
 
