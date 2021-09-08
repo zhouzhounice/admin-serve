@@ -128,9 +128,37 @@
 
 ​		用户在控制台取消被禁用的按钮并且发送了请求，要将这些请求拦截下来
 
+#### 3.vue权限管理实现
+
+
+
 ## 商品管理 
 
 ### 准备工作
 
 1. 搭建路由，使得各个页面能够无需刷新而跳转
+
+## 项目的上线与部署
+
+### 准备工作
+
+#### 1.首先打包项目
+
+目的：打包可以处理比如像兼容性的各种问题，将代码编译成浏览器可以识别的语法，同时对代码做一些优化
+
+```js
+docker run --detach --name solo --network=host \
+    --env RUNTIME_DB="MYSQL" \
+    --env JDBC_USERNAME="root" \
+    --env JDBC_PASSWORD="woshi2bb" \
+    --env JDBC_DRIVER="com.mysql.cj.jdbc.Driver" \
+    --env JDBC_URL="jdbc:mysql://127.0.0.1:3306/solo?useUnicode=yes&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true" \
+    b3log/solo --listen_port=8080 --server_scheme=http --server_host=localhost --server_port=
+
+
+作者：88250
+链接：https://ld246.com/article/1492881378588
+来源：链滴
+协议：CC BY-SA 4.0 https://creativecommons.org/licenses/by-sa/4.0/
+```
 
